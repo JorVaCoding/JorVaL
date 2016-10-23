@@ -1,0 +1,7 @@
+var boolean = true
+var number = 3.14
+var text = "Hello World"
+
+println("'boolean' is a ", typeof(boolean), " with a value of '", boolean, "'.");
+println("'number' is a ", typeof(number), " with a value of '", number, "'.");
+println("'text' is a ", typeof(text), " with a value of '", text, "'.");
