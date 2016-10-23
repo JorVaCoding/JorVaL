@@ -30,7 +30,6 @@ class TracingPrintStream extends PrintStream {
 		super(original);
 	}
 
-	// You'd want to override other methods too, of course.
 	@Override
 	public void println(String line) {
 		StackTraceElement[] stack = Thread.currentThread().getStackTrace();

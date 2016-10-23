@@ -19,13 +19,13 @@ public class Interpeter {
 	private File file = null;
 	int lineNum = 0;
 
-	public Interpeter(URI filePath, HashMap<String,Variable> variables) {
+	public Interpeter(URI filePath, HashMap<String, Variable> variables) {
 		this.filePath = filePath;
 		file = new File(filePath);
 		new Interpeter(read(file), variables);
 	}
-	
-	public Interpeter(ArrayList<String> al, HashMap<String,Variable> variables){
+
+	public Interpeter(ArrayList<String> al, HashMap<String, Variable> variables) {
 		for (String line : al) {
 			lineNum++;
 			line = line.trim();
@@ -34,8 +34,18 @@ public class Interpeter {
 			if (line.endsWith(";"))
 				line = line.substring(0, line.length() - 1);
 
-			if (line.startsWith("var"))
-				createVariable(line);
+			if (line.startsWith("var")) {
+				createVariable(line, null);
+				continue;
+			}
+
+			for (String s : variables.keySet()) {
+				if (line.startsWith(s) && (line.split(s)[1].trim().startsWith("="))) {
+					createVariable(line, s);
+					break;
+				}
+			}
+
 			try {
 				runFunction(line);
 			} catch (Exception e) {
@@ -47,7 +57,7 @@ public class Interpeter {
 	public Variable runFunction(String line) throws Exception {
 		for (Function func : FunctionRegistry.getFunctions()) {
 			if (line.startsWith(func.getKey()) && line.split(func.getKey())[1].startsWith("(")) {
-				String paramsString = line.substring(line.indexOf('(') + 1, line.length()-1);
+				String paramsString = line.substring(line.indexOf('(') + 1, line.length() - 1);
 				String params[] = paramsString.split(",");
 				LinkedList<Variable> paramsAL = new LinkedList<Variable>();
 				for (String p : params) {
@@ -74,7 +84,7 @@ public class Interpeter {
 		return null;
 	}
 
-	public void createVariable(String s) {
+	public void createVariable(String s, String vName) {
 		String vType = null;
 		String variableData = s.split("=", 2)[1].trim();
 		if (s.contains("<") && s.contains(">")) {
@@ -82,23 +92,9 @@ public class Interpeter {
 		} else {
 			vType = VariableTypes.getByData(variableData).toString().toLowerCase();
 		}
-		switch (vType) {
-		case "text":
-		case "str":
-		case "string":
-			Main.getGlobalVariables().put(s.split(" ")[1],
-					Variable.interpet(VariableTypes.TEXT, variableData, this));
-			break;
-		case "number":
-		case "num":
-			Main.getGlobalVariables().put(s.split(" ")[1],
-					Variable.interpet(VariableTypes.NUMBER, variableData, this));
-			break;
-		case "boolean":
-		case "bool":
-			Main.getGlobalVariables().put(s.split(" ")[1],
-					Variable.interpet(VariableTypes.BOOLEAN, variableData, this));
-		}
+		
+		Variable variable = Variable.interpet(VariableTypes.fromString(vType), variableData, this);
+		Main.getGlobalVariables().put(vName != null ? vName : s.split(" ")[1], variable);
 	}
 
 	public ArrayList<String> read(File f) {

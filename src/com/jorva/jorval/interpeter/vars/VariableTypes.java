@@ -16,4 +16,21 @@ public enum VariableTypes {
 		}
 		return TEXT;
 	}
+
+	public static VariableTypes fromString(String s) {
+		switch (s) {
+		case "text":
+		case "str":
+		case "string":
+			return TEXT;
+		case "number":
+		case "num":
+			return NUMBER;
+		case "boolean":
+		case "bool":
+			return BOOLEAN;
+		default:
+			return null;
+		}
+	}
 }
