@@ -16,7 +16,7 @@ public class Main {
 		FunctionRegistry.init();
 		variables = new HashMap<String, HashMap<String, Variable>>();
 		variables.put("global", new HashMap<String, Variable>());
-		new Interpeter(Main.class.getResource("/test.jvl").toURI(), getGlobalVariables());
+		new Interpeter(Main.class.getResource("/working/unassignedVars.jvl").toURI(), getGlobalVariables(), "test.jvl");
 	}
 
 	public static HashMap<String, Variable> getGlobalVariables() {

@@ -14,7 +14,9 @@ public enum VariableTypes {
 			return VariableTypes.NUMBER;
 		} catch (Exception e) {
 		}
-		return TEXT;
+		if(variableData.startsWith("\"") && variableData.endsWith("\""))
+			return TEXT;
+		return null;
 	}
 
 	public static VariableTypes fromString(String s) {

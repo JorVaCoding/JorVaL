@@ -6,6 +6,7 @@ import java.util.List;
 import com.jorva.jorval.interpeter.Interpeter;
 import com.jorva.jorval.interpeter.Main;
 import com.jorva.jorval.interpeter.MathUtils;
+import com.jorva.jorval.interpeter.exceptions.InterpeterException;
 import com.jorva.jorval.interpeter.funcs.Function;
 
 public abstract class Variable {
@@ -25,7 +26,7 @@ public abstract class Variable {
 		return data;
 	}
 
-	public static Variable interpet(VariableTypes type, String input, Interpeter i) {
+	public static Variable interpet(VariableTypes type, String input, Interpeter i) throws InterpeterException {
 
 		try {
 			Variable funcOut = i.runFunction(input);
@@ -38,29 +39,32 @@ public abstract class Variable {
 
 		if (type == null)
 			for (VariableTypes type1 : VariableTypes.values()) {
-				Variable v = interpet(type1, input, i);
-				if (v != null)
-					return v;
+				try {
+					Variable v = interpet(type1, input, i);
+					if (v != null)
+						return v;
+				} catch (Exception e) {
+				}
 			}
 
-		switch (type) {
-		case TEXT:
-			String text = input;
-			if (input.startsWith("\"") && input.endsWith("\"")) {
-				text = input.substring(1, input.length() - 1);
+		if (type != null)
+			switch (type) {
+			case TEXT:
+				String text = input;
+				if (input.startsWith("\"") && input.endsWith("\"")) {
+					text = input.substring(1, input.length() - 1);
+					return new VariableText(text);
+				}
+			case NUMBER:
+				return new VariableNumber(MathUtils.evalWithVariables(input, Main.getGlobalVariables()));
+			case BOOLEAN:
+				if (input.equalsIgnoreCase("true") || input.equalsIgnoreCase("false"))
+					return new VariableBoolean(Boolean.parseBoolean(input));
+			default:
+				break;
 			}
-			return new VariableText(text);
-		case ARRAY:
-			break;
-		case BOOLEAN:
-			return new VariableBoolean(Boolean.parseBoolean(input));
-		case NUMBER:
-			return new VariableNumber(MathUtils.evalWithVariables(input, Main.getGlobalVariables()));
-		default:
-			break;
-		}
+		throw new InterpeterException("Couldn't create/find variable [" + input + "]", i, null);
 
-		return null;
 	}
 
 	public List<Function> getFunctions() {

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import com.jorva.jorval.interpeter.exceptions.ExceptionVariableNull;
+import com.jorva.jorval.interpeter.exceptions.InterpeterException;
 import com.jorva.jorval.interpeter.funcs.Function;
 import com.jorva.jorval.interpeter.funcs.FunctionRegistry;
 import com.jorva.jorval.interpeter.vars.Variable;
@@ -18,14 +18,17 @@ public class Interpeter {
 	private URI filePath = null;
 	private File file = null;
 	int lineNum = 0;
+	public final String name;
 
-	public Interpeter(URI filePath, HashMap<String, Variable> variables) {
+	public Interpeter(URI filePath, HashMap<String, Variable> variables, String name) {
 		this.filePath = filePath;
-		file = new File(filePath);
-		new Interpeter(read(file), variables);
+		file = new File(this.filePath);
+		this.name = name;
+		new Interpeter(read(file), variables, name);
 	}
 
-	public Interpeter(ArrayList<String> al, HashMap<String, Variable> variables) {
+	public Interpeter(ArrayList<String> al, HashMap<String, Variable> variables, String name) {
+		this.name = name;
 		for (String line : al) {
 			lineNum++;
 			line = line.trim();
@@ -70,8 +73,8 @@ public class Interpeter {
 							paramsAL.add(var);
 						} else {
 							try {
-								throw new ExceptionVariableNull("global:" + p, lineNum, filePath.toString());
-							} catch (ExceptionVariableNull e) {
+								throw new InterpeterException("Couldn't find variable " + var, this, lineNum);
+							} catch (InterpeterException e) {
 								e.printStackTrace();
 								continue;
 							}
@@ -93,8 +96,12 @@ public class Interpeter {
 			vType = VariableTypes.getByData(variableData).toString().toLowerCase();
 		}
 		
-		Variable variable = Variable.interpet(VariableTypes.fromString(vType), variableData, this);
-		Main.getGlobalVariables().put(vName != null ? vName : s.split(" ")[1], variable);
+		try {
+			Variable variable = Variable.interpet(VariableTypes.fromString(vType), variableData, this);
+			Main.getGlobalVariables().put(vName != null ? vName : s.split(" ")[1], variable);
+		} catch (InterpeterException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public ArrayList<String> read(File f) {
@@ -113,5 +120,9 @@ public class Interpeter {
 
 		return output;
 
+	}
+
+	public int getLine() {
+		return lineNum;
 	}
 }
