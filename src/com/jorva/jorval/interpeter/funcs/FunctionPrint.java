@@ -1,5 +1,6 @@
 package com.jorva.jorval.interpeter.funcs;
 
+import com.jorva.jorval.interpeter.Interpeter;
 import com.jorva.jorval.interpeter.vars.Variable;
 import com.jorva.jorval.interpeter.vars.VariableTypes;
 
@@ -12,7 +13,7 @@ public class FunctionPrint implements Function {
 	}
 
 	@Override
-	public Variable exec(Variable... params) {
+	public Variable exec(Interpeter i, Variable... params) {
 		String msg = "";
 		for (Variable v : params) {
 			if (v != null)

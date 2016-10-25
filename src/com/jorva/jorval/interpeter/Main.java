@@ -12,15 +12,24 @@ public class Main {
 
 	public static void main(String[] args) throws URISyntaxException {
 
-//		System.setOut(new TracingPrintStream(System.out));
-		FunctionRegistry.init();
-		variables = new HashMap<String, HashMap<String, Variable>>();
-		variables.put("global", new HashMap<String, Variable>());
-		new Interpeter(Main.class.getResource("/test.jvl").toURI(), getGlobalVariables(), null);
+		 debug();
+		 FunctionRegistry.init();
+		 variables = new HashMap<String, HashMap<String, Variable>>();
+		 variables.put("global", new HashMap<String, Variable>());
+		 new Interpeter(Main.class.getResource("/test.jvl").toURI(),
+		 getGlobalVariables(), null);
+
 	}
 
 	public static HashMap<String, Variable> getGlobalVariables() {
 		return variables.get("global");
+	}
+	
+	private static void debug(){
+		if(false){
+			System.setOut(new TracingPrintStream(System.out));
+			System.setErr(new TracingPrintStream(System.err));
+		}
 	}
 
 }

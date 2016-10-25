@@ -15,6 +15,7 @@ public class FunctionRegistry {
 		getFunctions().add(new FunctionPrint(true));
 		getFunctions().add(new FunctionPrint(false));
 		getFunctions().add(new FunctionTypeOf());
+		getFunctions().add(new FunctionRead());
 		
 	}
 

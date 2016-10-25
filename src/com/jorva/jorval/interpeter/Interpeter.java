@@ -85,7 +85,7 @@ public class Interpeter {
 						}
 					}
 				}
-				return func.exec(paramsAL.toArray(new Variable[] {}));
+				return func.exec(this, paramsAL.toArray(new Variable[] {}));
 			}
 		}
 		return null;
@@ -96,11 +96,11 @@ public class Interpeter {
 		String variableData = s.split("=", 2)[1].trim();
 		if (s.contains("<") && s.contains(">")) {
 			vType = s.substring(s.indexOf('<') + 1, s.indexOf('>'));
+			
 		} else {
 			try{
 			vType = VariableTypes.getByData(variableData).toString().toLowerCase();
 			}catch(NullPointerException e){
-				return;
 			}
 		}
 		

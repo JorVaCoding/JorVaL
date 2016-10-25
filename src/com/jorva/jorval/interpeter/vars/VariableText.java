@@ -2,6 +2,7 @@ package com.jorva.jorval.interpeter.vars;
 
 import java.util.List;
 
+import com.jorva.jorval.interpeter.Interpeter;
 import com.jorva.jorval.interpeter.funcs.Function;
 
 public class VariableText extends Variable {
@@ -36,7 +37,7 @@ public class VariableText extends Variable {
 			}
 
 			@Override
-			public Variable exec(Variable... params) {
+			public Variable exec(Interpeter i, Variable... params) {
 				if (!(params[0] instanceof VariableText))
 					return null;
 				VariableText var = (VariableText) params[0];
@@ -57,7 +58,7 @@ public class VariableText extends Variable {
 			}
 
 			@Override
-			public Variable exec(Variable... params) {
+			public Variable exec(Interpeter i, Variable... params) {
 				if (!(params[0] instanceof VariableText))
 					return null;
 				VariableText var = (VariableText) params[0];

@@ -27,7 +27,7 @@ public abstract class Variable {
 	}
 
 	public static Variable interpet(VariableTypes type, String input, Interpeter i) throws InterpeterException {
-
+		input = input.trim();
 		for (String string : i.getVariables().keySet()) {
 			if (string.equals(input)) {
 				Variable v = i.getVariables().get(string);
@@ -81,5 +81,10 @@ public abstract class Variable {
 		List<Function> out = new LinkedList<Function>();
 
 		return out;
+	}
+	
+	@Override
+	public String toString() {
+		return data + "";
 	}
 }

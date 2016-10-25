@@ -20,6 +20,8 @@ public enum VariableTypes {
 	}
 
 	public static VariableTypes fromString(String s) {
+		if(s == null)
+			return null;
 		switch (s) {
 		case "text":
 		case "str":

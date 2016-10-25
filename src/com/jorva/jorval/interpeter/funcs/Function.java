@@ -1,12 +1,15 @@
 package com.jorva.jorval.interpeter.funcs;
 
+import com.jorva.jorval.interpeter.Interpeter;
 import com.jorva.jorval.interpeter.vars.Variable;
 import com.jorva.jorval.interpeter.vars.VariableTypes;
 
 public interface Function {
-	public abstract Variable exec(Variable... params);
+	public Variable exec(Interpeter interpeter, Variable... params);
 	
-	public abstract String getKey();
+	public String getKey();
 	
-	public abstract VariableTypes getReturnType();
+	public VariableTypes getReturnType();
+	
+	
 }
