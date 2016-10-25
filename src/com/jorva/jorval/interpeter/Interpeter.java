@@ -19,16 +19,20 @@ public class Interpeter {
 	private File file = null;
 	int lineNum = 0;
 	public final String name;
+	private final HashMap<String, Variable> variables;
 
 	public Interpeter(URI filePath, HashMap<String, Variable> variables, String name) {
 		this.filePath = filePath;
 		file = new File(this.filePath);
-		this.name = name;
+		this.name = name != null ? name : filePath.toString();
+		this.variables = variables;
+		
 		new Interpeter(read(file), variables, name);
 	}
 
 	public Interpeter(ArrayList<String> al, HashMap<String, Variable> variables, String name) {
 		this.name = name;
+		this.variables = variables;
 		for (String line : al) {
 			lineNum++;
 			line = line.trim();
@@ -93,7 +97,11 @@ public class Interpeter {
 		if (s.contains("<") && s.contains(">")) {
 			vType = s.substring(s.indexOf('<') + 1, s.indexOf('>'));
 		} else {
+			try{
 			vType = VariableTypes.getByData(variableData).toString().toLowerCase();
+			}catch(NullPointerException e){
+				return;
+			}
 		}
 		
 		try {
@@ -124,5 +132,9 @@ public class Interpeter {
 
 	public int getLine() {
 		return lineNum;
+	}
+	
+	public HashMap<String, Variable> getVariables(){
+		return variables;
 	}
 }

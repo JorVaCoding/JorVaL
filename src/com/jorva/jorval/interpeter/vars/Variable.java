@@ -27,7 +27,13 @@ public abstract class Variable {
 	}
 
 	public static Variable interpet(VariableTypes type, String input, Interpeter i) throws InterpeterException {
-
+		
+		for(String string : i.getVariables().keySet()){
+			if(string.equals(input)){
+				return i.getVariables().get(string);
+			}
+		}
+		
 		try {
 			Variable funcOut = i.runFunction(input);
 			if (funcOut != null) {

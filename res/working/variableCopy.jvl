@@ -1,0 +1,5 @@
+var pi = 3.14159
+var piCopy = pi
+
+println("'pi' is a ", typeof(pi), " with a value of '", pi, "'.");
+println("'piCopy' is a ", typeof(piCopy), " with a value of '", piCopy, "'.");
