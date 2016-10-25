@@ -3,5 +3,5 @@ var piCopy1 = pi
 var<text> piCopy2 = pi
 
 println("'pi' is a ", typeof(pi), " with a value of '", pi, ".'");
-println("'piCopy' is a ", typeof(piCopy), " with a value of '", piCopy, ".'");
+println("'piCopy1' is a ", typeof(piCopy1), " with a value of '", piCopy1, ".'");
 println("'piCopy2' is a ", typeof(piCopy2), " with a value of '", piCopy2, ".'");
