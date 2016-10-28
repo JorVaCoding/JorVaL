@@ -5,11 +5,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import com.jorva.jorval.interpeter.exceptions.InterpeterException;
 import com.jorva.jorval.interpeter.funcs.Function;
+import com.jorva.jorval.interpeter.funcs.FunctionBlock;
 import com.jorva.jorval.interpeter.funcs.FunctionRegistry;
 import com.jorva.jorval.interpeter.vars.Variable;
 import com.jorva.jorval.interpeter.vars.VariableTypes;
@@ -26,13 +28,15 @@ public class Interpeter {
 		file = new File(this.filePath);
 		this.name = name != null ? name : filePath.toString();
 		this.variables = variables;
-		
 		new Interpeter(read(file), variables, name);
 	}
 
-	public Interpeter(ArrayList<String> al, HashMap<String, Variable> variables, String name) {
+	public Interpeter(Collection<String> al, HashMap<String, Variable> variables, String name) {
 		this.name = name;
 		this.variables = variables;
+		boolean isInLoop = false, loopEnded = false;
+		Collection<String> loopCollection = new LinkedList<String>();
+		String loopStart = "";
 		for (String line : al) {
 			lineNum++;
 			line = line.trim();
@@ -40,6 +44,30 @@ public class Interpeter {
 				continue;
 			if (line.endsWith(";"))
 				line = line.substring(0, line.length() - 1);
+
+			if (loopEnded) {
+				String fname = loopStart.split(" ")[1].replace("{", "");
+				FunctionRegistry.getFunctions().add(new FunctionBlock(fname, loopCollection));
+				isInLoop = false;
+				loopEnded = false;
+				loopCollection = new LinkedList<String>();
+				loopStart = "";
+			}
+
+			if (line.startsWith("function")) {
+				loopStart = line;
+				isInLoop = true;
+				continue;
+			}
+			if (isInLoop) {
+				if (line.trim().equals("}")) {
+					isInLoop = false;
+					loopEnded = true;
+					continue;
+				}
+				loopCollection.add(line);
+				continue;
+			}
 
 			if (line.startsWith("var")) {
 				createVariable(line, null);
@@ -69,23 +97,25 @@ public class Interpeter {
 				LinkedList<Variable> paramsAL = new LinkedList<Variable>();
 				for (String p : params) {
 					p = p.trim();
-					if (Main.getGlobalVariables().containsKey(p)) {
-						paramsAL.add(Main.getGlobalVariables().get(p));
+					if (variables.containsKey(p)) {
+						paramsAL.add(variables.get(p));
 					} else {
-						Variable var = Variable.interpet(null, p, this);
-						if (var != null) {
-							paramsAL.add(var);
-						} else {
-							try {
-								throw new InterpeterException("Couldn't find variable " + var, this, lineNum);
-							} catch (InterpeterException e) {
-								e.printStackTrace();
-								continue;
+						if (!(p == null || p.isEmpty())) {
+							Variable var = Variable.interpet(null, p, this);
+							if (var != null) {
+								paramsAL.add(var);
+							} else {
+								try {
+									throw new InterpeterException("Couldn't find variable " + var, this, lineNum);
+								} catch (InterpeterException e) {
+									e.printStackTrace();
+									continue;
+								}
 							}
 						}
 					}
+					return func.exec(this, paramsAL.toArray(new Variable[] {}));
 				}
-				return func.exec(this, paramsAL.toArray(new Variable[] {}));
 			}
 		}
 		return null;
@@ -96,17 +126,17 @@ public class Interpeter {
 		String variableData = s.split("=", 2)[1].trim();
 		if (s.contains("<") && s.contains(">")) {
 			vType = s.substring(s.indexOf('<') + 1, s.indexOf('>'));
-			
+
 		} else {
-			try{
-			vType = VariableTypes.getByData(variableData).toString().toLowerCase();
-			}catch(NullPointerException e){
+			try {
+				vType = VariableTypes.getByData(variableData).toString().toLowerCase();
+			} catch (NullPointerException e) {
 			}
 		}
-		
+
 		try {
 			Variable variable = Variable.interpet(VariableTypes.fromString(vType), variableData, this);
-			Main.getGlobalVariables().put(vName != null ? vName : s.split(" ")[1], variable);
+			variables.put(vName != null ? vName : s.split(" ")[1], variable);
 		} catch (InterpeterException e) {
 			e.printStackTrace();
 		}
@@ -133,8 +163,8 @@ public class Interpeter {
 	public int getLine() {
 		return lineNum;
 	}
-	
-	public HashMap<String, Variable> getVariables(){
+
+	public HashMap<String, Variable> getVariables() {
 		return variables;
 	}
 }

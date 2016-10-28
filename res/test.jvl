@@ -1,0 +1,7 @@
+
+function pt {
+	print(param0)
+	print(param0)
+}
+
+pt("hello")

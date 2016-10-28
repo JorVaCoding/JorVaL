@@ -3,6 +3,7 @@ package com.jorva.jorval.interpeter;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 
 import com.jorva.jorval.interpeter.funcs.FunctionRegistry;
 import com.jorva.jorval.interpeter.vars.Variable;
@@ -12,24 +13,29 @@ public class Main {
 
 	public static void main(String[] args) throws URISyntaxException {
 
-		 debug();
-		 FunctionRegistry.init();
-		 variables = new HashMap<String, HashMap<String, Variable>>();
-		 variables.put("global", new HashMap<String, Variable>());
-		 new Interpeter(Main.class.getResource("/test.jvl").toURI(),
-		 getGlobalVariables(), null);
-
+		debug();
+		FunctionRegistry.init();
+		variables = new HashMap<String, HashMap<String, Variable>>();
+		variables.put("global", new HashMap<String, Variable>());
+		new Interpeter(Main.class.getResource("/test.jvl").toURI(), getGlobalVariables(), null);
+		
 	}
 
 	public static HashMap<String, Variable> getGlobalVariables() {
 		return variables.get("global");
 	}
 	
-	private static void debug(){
-		if(false){
-			System.setOut(new TracingPrintStream(System.out));
-			System.setErr(new TracingPrintStream(System.err));
-		}
+	public static void runBlock(List<String> code){
+		
+	}
+
+	private static void debug() {
+		System.setOut(new TracingPrintStream(System.out));
+		System.setErr(new TracingPrintStream(System.err));
+	}
+	
+	public static synchronized HashMap<String, HashMap<String, Variable>> getVariables(){
+		return variables;
 	}
 
 }

@@ -25,8 +25,10 @@ public abstract class Variable {
 	public Object getData() {
 		return data;
 	}
-
+	
 	public static Variable interpet(VariableTypes type, String input, Interpeter i) throws InterpeterException {
+		if(input == null || input.isEmpty())
+			return null;
 		input = input.trim();
 		for (String string : i.getVariables().keySet()) {
 			if (string.equals(input)) {

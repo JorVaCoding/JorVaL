@@ -20,7 +20,10 @@ public class FunctionPrint implements Function {
 				msg += v.getData();
 		}
 		
-		System.out.println(msg);
+		if(line)
+			System.out.println(msg);
+		else
+			System.out.print(msg);
 
 		return null;
 	}
